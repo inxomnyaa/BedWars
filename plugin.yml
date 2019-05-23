@@ -1,0 +1,31 @@
+---
+name: XBedWars
+main: xenialdan\BedWars\Loader
+version: 1.1.2
+api: [3.0.0, 4.0.0]
+author: XenialDan
+load: POSTWORLD
+softdepend:
+- DEVirion
+- gamereward
+prefix: "[BedWars]"
+permissions:
+  bedwars.command:
+    description: Base perm for bedwars commands
+    default: true
+    children:
+      bedwars.command.leave:
+        default: true
+      bedwars.command.forcestart:
+        default: op
+      bedwars.command.stop:
+        default: op
+      bedwars.command.endsetup:
+        default: op
+      bedwars.command.setup:
+        default: op
+      bedwars.command.info:
+        default: true
+      bedwars.command.status:
+        default: op
+...
