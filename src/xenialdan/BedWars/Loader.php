@@ -74,26 +74,30 @@ class Loader extends Game
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         foreach (glob($this->getDataFolder() . "*.json") as $v) {
-            $settings = new BedwarsSettings($v);
-            var_dump($settings->gold, $settings->get("gold"));
-            $levelname = basename($v, ".json");
-            $arena = new Arena($levelname, $this, $settings);
-            foreach ($settings->getNested("teams", []) as $teamname => $teaminfo) {
-                $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
-                $team->setMinPlayers(1);
-                $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
-                #if (!is_null($teaminfo["spawn"]))
-                $team->setSpawn(new Vector3(
-                        $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
-                        $teaminfo["spawn"]["y"] ?? $arena->getLevel()->getSpawnLocation()->getFloorY(),
-                        $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
-                    )
-                );
-                $arena->addTeam($team);
-                var_dump($team);
-            }
-            $this->addArena($arena);
+            $this->addArena($this->getNewArena($v));
         }
+    }
+
+    public function getNewArena(string $settingsPath): Arena
+    {
+        $settings = new BedwarsSettings($settingsPath);
+        var_dump($settings->gold, $settings->get("gold"));
+        $levelname = basename($settingsPath, ".json");
+        $arena = new Arena($levelname, $this, $settings);
+        foreach ($settings->getNested("teams", []) as $teamname => $teaminfo) {
+            $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
+            $team->setMinPlayers(1);
+            $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
+            #if (!is_null($teaminfo["spawn"]))
+            $team->setSpawn(new Vector3(
+                    $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
+                    $teaminfo["spawn"]["y"] ?? $arena->getLevel()->getSpawnLocation()->getFloorY(),
+                    $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
+                )
+            );
+            $arena->addTeam($team);
+        }
+        return $arena;
     }
 
     private static function getTeamNamesByAmount(int $amount): array
@@ -156,16 +160,8 @@ class Loader extends Game
                             foreach ($teams as $color => $name) {
                                 $settings->teams[$name] = ["color" => $color, "maxplayers" => $setup["maxplayers"]];
                             }
-                            $arena = new Arena($setup["name"], $this, $settings);
-                            foreach ($settings->teams as $teamname => $teaminfo) {
-                                $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
-                                $team->setMinPlayers(1);
-                                $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
-                                $arena->addTeam($team);
-                            }
-                            $this->addArena($arena);
-                            $arena->getSettings()->/*toConfig($this->getDataFolder() . $arena->getLevelName() . ".json")->*/
-                            save();
+                            $settings->save();
+                            $this->addArena($this->getNewArena($this->getDataFolder() . $setup["name"] . ".json"));
                             //Messages
                             $player->sendMessage(TextFormat::GOLD . TextFormat::BOLD . "Done! Bedwars arena was set up with following settings:");
                             $player->sendMessage(TextFormat::AQUA . "World name: " . TextFormat::DARK_AQUA . $setup["name"]);
