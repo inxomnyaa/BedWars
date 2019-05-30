@@ -6,7 +6,6 @@ use muqsit\invmenu\inventories\BaseFakeInventory;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\block\BlockIds;
-use pocketmine\entity\Attribute;
 use pocketmine\entity\Entity;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\entity\object\PrimedTNT;
@@ -22,11 +21,9 @@ use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\Player;
-use pocketmine\plugin\PluginBase;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
@@ -41,11 +38,9 @@ use xenialdan\customui\windows\SimpleForm;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
 use xenialdan\gameapi\Game;
-use xenialdan\gameapi\gamerule\BoolGameRule;
-use xenialdan\gameapi\gamerule\GameRuleList;
 use xenialdan\gameapi\Team;
 
-class Loader extends PluginBase implements Game
+class Loader extends Game
 {
     const BRONZE = "Bronze";
     const SILVER = "Silver";
@@ -53,8 +48,6 @@ class Loader extends PluginBase implements Game
 
     /** @var Loader */
     private static $instance = null;
-    /** @var Arena[] */
-    private static $arenas = [];
 
     /**
      * Returns an instance of the plugin
@@ -100,14 +93,6 @@ class Loader extends PluginBase implements Game
                 var_dump($team);
             }
             $this->addArena($arena);
-        }
-    }
-
-    public function onDisable()
-    {
-        try {
-            API::stop($this);
-        } catch (\ReflectionException $e) {
         }
     }
 
@@ -291,8 +276,8 @@ class Loader extends PluginBase implements Game
                                     $arena->getLevel()->stopTime();
                                     $arena->getLevel()->setTime(Level::TIME_DAY);
                                     $item = ItemFactory::get(Item::SPAWN_EGG, Entity::VILLAGER, 64);
-                                    $item->setLore(["Use to spawn a villager shop", "Sneak and hit a villager to remove it","Hit a villager to rotate him 45 degrees"]);
-                                    $item->setCustomName(TextFormat::GOLD.TextFormat::BOLD."Shop");
+                                    $item->setLore(["Use to spawn a villager shop", "Sneak and hit a villager to remove it", "Hit a villager to rotate him 45 degrees"]);
+                                    $item->setCustomName(TextFormat::GOLD . TextFormat::BOLD . "Shop");
                                     $player->getInventory()->addItem($item);
                                     $player->sendMessage(TextFormat::GOLD . "Use the spawn egg to add a villager. Sneak and hit a villager to remove it. Hit a villager to rotate him 45 degrees");
                                 });
@@ -324,18 +309,6 @@ class Loader extends PluginBase implements Game
         $player->sendForm($form);
     }
 
-    public function endSetupArena(Player $player): void
-    {
-        $arena = API::getArenaByLevel($this, $player->getLevel());
-        $arena->getSettings()->save();
-        $arena->setState(Arena::IDLE);
-        $player->getInventory()->clearAll();
-        $player->setAllowFlight(false);
-        $player->setFlying(false);
-        $player->setGamemode($player->getServer()->getDefaultGamemode());
-        $player->teleport($player->getServer()->getDefaultLevel()->getSpawnLocation());
-    }
-
     /**
      * @param Arena $arena
      * @param Player $player
@@ -348,105 +321,14 @@ class Loader extends PluginBase implements Game
     }
 
     /**
-     * Adds an arena
-     * @param Arena $arena
-     */
-    public function addArena(Arena $arena): void
-    {
-        //TODO see MonsterHunt
-        self::$arenas[$arena->getLevelName()] = $arena;
-        var_dump(array_keys(self::$arenas));
-    }
-
-    /**
-     * Removes an arena
-     * @param Arena $arena
-     */
-    public function removeArena(Arena $arena): void
-    {
-        unset(self::$arenas[$arena->getLevelName()]);
-    }
-
-    /**
-     * Stops, removes and deletes the arena config
-     * @param Arena $arena
-     * @return bool
-     */
-    public function deleteArena(Arena $arena): bool
-    {
-        $arena->stopArena();
-        $this->removeArena($arena);
-        return @unlink($this->getDataFolder() . $arena->getLevelName() . ".json");
-    }
-
-    /**
-     * returns all arenas
-     * @return Arena[]
-     */
-    public function getArenas(): array
-    {
-        return self::$arenas;
-    }
-
-    /**
-     * @return Player[]
-     */
-    public function getPlayers()
-    {
-        $players = [];
-        foreach ($this->getArenas() as $arena) {
-            $players = array_merge($players, $arena->getPlayers());
-        }
-        return $players;
-    }
-
-    /**
-     * The prefix of the game
-     * Used for messages and signs
-     * @return string;
-     */
-    public function getPrefix(): string
-    {
-        return $this->getDescription()->getPrefix();
-    }
-
-    /**
-     * The names of the authors
-     * @return string;
-     */
-    public function getAuthors(): string
-    {
-        return implode(", ", $this->getDescription()->getAuthors());
-    }
-
-    /**
      * @param Arena $arena
      */
     public function startArena(Arena $arena): void
     {
-        //Clear old entities
-        /** @var Entity $toClose */
-        foreach (array_filter($arena->getLevel()->getEntities(), function (Entity $entity) {
-            return $entity instanceof ItemEntity || $entity instanceof PrimedTNT || $entity instanceof Arrow;
-        }) as $toClose) {
-            $toClose->close();
-        }
-        $arena->getLevel()->setTime(Level::TIME_DAY);
-        $arena->getLevel()->stopTime();
-        $pk = new GameRulesChangedPacket();
-        $gamerulelist = new GameRuleList();
-        $gamerulelist->setRule(new BoolGameRule(GameRuleList::DODAYLIGHTCYCLE, false));
-        $pk->gameRules = $gamerulelist->getRules();
-        $arena->getLevel()->broadcastGlobalPacket($pk);
         /** @var BedwarsTeam $team */
         foreach ($arena->getTeams() as $team) {
             $team->setBedDestroyed(false);
             foreach ($team->getPlayers() as $player) {
-                $player->setGamemode(Player::SURVIVAL);
-                $player->getInventory()->clearAll();
-                $player->setHealth($player->getMaxHealth());
-                $player->setFood($player->getMaxFood());
-                $player->setSaturation($player->getAttributeMap()->getAttribute(Attribute::SATURATION)->getMaxValue());
                 $player->setSpawn(Position::fromObject($team->getSpawn(), $arena->getLevel()));
                 $player->teleport($player->getSpawn());
             }
@@ -464,8 +346,6 @@ class Loader extends PluginBase implements Game
      */
     public function stopArena(Arena $arena): void
     {
-        $arena->getSettings()->save();
-        $this->getServer()->broadcastMessage("[DEBUG] Stopping " . $arena->getLevelName());
     }
 
     public function spawnBronze(Arena $arena)
@@ -556,14 +436,8 @@ class Loader extends PluginBase implements Game
      * Called right when a player joins a game in an arena. Used to set up players
      * @param Player $player
      */
-    public function onPlayerJoinGame(Player $player): void
+    public function onPlayerJoinTeam(Player $player): void
     {
-        //Always day - prevents sleeping in bed
-        $pk = new GameRulesChangedPacket();
-        $gamerulelist = new GameRuleList();
-        $gamerulelist->setRule(new BoolGameRule(GameRuleList::DODAYLIGHTCYCLE, false));
-        $pk->gameRules = $gamerulelist->getRules();
-        $player->sendDataPacket($pk);
         $player->setSpawn(Position::fromObject(API::getTeamOfPlayer($player)->getSpawn(), API::getArenaOfPlayer($player)->getLevel()));
         //Team color switching
         $player->getInventory()->addItem(Item::get(ItemIds::BED, API::getMetaByColor(API::getTeamOfPlayer($player)->getColor()))->setCustomName("Switch Team"));
@@ -575,7 +449,7 @@ class Loader extends PluginBase implements Game
      * @param Entity $entity
      * @return bool
      */
-    public function removeEntityOnReset(Entity $entity): bool
+    public function removeEntityOnArenaReset(Entity $entity): bool
     {
         return $entity instanceof ItemEntity || $entity instanceof PrimedTNT || $entity instanceof Arrow;
     }
