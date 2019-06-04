@@ -17,7 +17,6 @@ use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
 use pocketmine\item\Potion;
-use pocketmine\level\generator\GeneratorManager;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -84,7 +83,8 @@ class Loader extends Game
         var_dump($settings->gold, $settings->get("gold"));
         $levelname = basename($settingsPath, ".json");
         $arena = new Arena($levelname, $this, $settings);
-        foreach ($settings->getNested("teams", []) as $teamname => $teaminfo) {
+        var_dump($settings->teams, $settings->get("teams"));
+        foreach ($settings->get("teams", []) as $teamname => $teaminfo) {
             $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
             $team->setMinPlayers(1);
             $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
@@ -95,6 +95,7 @@ class Loader extends Game
                     $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
                 )
             );
+            var_dump($team);
             $arena->addTeam($team);
         }
         return $arena;
@@ -145,7 +146,7 @@ class Loader extends Game
                     $form->setCallable(function (Player $player, $data) use ($new) {
                         $setup["name"] = $new ? $data[1] : $data;
                         if ($new) {
-                            Server::getInstance()->generateLevel($setup["name"], null, GeneratorManager::getGenerator('game_void'));
+                            API::$generator->generateLevel($setup["name"]);
                         }
                         Server::getInstance()->loadLevel($setup["name"]);
                         $form = new CustomForm("Bedwars teams setup");
@@ -293,6 +294,7 @@ class Loader extends Game
                                             $this->deleteArena($arena) ? $player->sendMessage(TextFormat::GREEN . "Successfully deleted the arena") : $player->sendMessage(TextFormat::RED . "Removed the arena, but config file could not be deleted!");
                                         }
                                     });
+                                    $player->sendForm($form);
                                 });
                                 $player->sendForm($form);
                                 break;

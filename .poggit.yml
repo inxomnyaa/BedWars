@@ -1,0 +1,12 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/thebigsmileXD/BedWars
+branches:
+- master
+projects:
+  BedWars:
+    path: ""
+    libs:
+    - src: thebigsmilexd/customui/customui
+      version: ^3.0.0
+    - src: thebigsmilexd/gameapi/gameapi
+      version: ^4.0.2
+...
