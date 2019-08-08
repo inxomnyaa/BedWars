@@ -21,7 +21,7 @@ class BedwarsCommand extends PluginCommand
         $this->setAliases(["bedwars"]);
         $this->setPermission("bedwars.command");
         $this->setDescription("Bedwars commands for setup or leaving a game");
-        $this->setUsage("/bw | /bw setup | /bw endsetup | /bw leave | /bw forcestart | /bw stop | /bw status | /bw info");
+        $this->setUsage("/bw | /bw setup | /bw endsetup | /bw leave | /bw forcestart | /bw stop | /bw status | /bw info | /bw help");
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args)
@@ -38,7 +38,7 @@ class BedwarsCommand extends PluginCommand
         }
         try {
             $return = true;
-            switch ($args[0] ?? "setup") {
+            switch ($args[0] ?? "help") {
                 case "setup":
                     {
                         if (!$sender->hasPermission("bedwars.command.setup")) {
@@ -103,6 +103,16 @@ class BedwarsCommand extends PluginCommand
                         $arena->forcedStart = true;
                         $arena->setTimer(5);
                         $sender->getServer()->broadcastMessage("Arena will start immediately due to a forced start by " . $sender->getDisplayName(), $arena->getPlayers());
+                        break;
+                    }
+                case "help":
+                    {
+                        if (!$sender->hasPermission("bedwars.command.help")) {
+                            $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
+                            return true;
+                        }
+                        $sender->sendMessage($this->getUsage());
+                        $return = true;
                         break;
                     }
                 default:
