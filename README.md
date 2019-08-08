@@ -1,3 +1,5 @@
+![BedWars wide banner!](https://github.com/thebigsmileXD/BedWars/blob/master/resources/xbedwars_icon_wide.png)
+---
 # BedWars
 <!-- todo activate poggit badges
 [![](https://poggit.pmmp.io/shield.state/BedWars)](https://poggit.pmmp.io/p/BedWars)

@@ -4,6 +4,7 @@ branches:
 projects:
   BedWars:
     path: ""
+    icon: "resources/xbedwars_icon_square_small.png"
     libs:
     - src: thebigsmilexd/customui/customui
       version: ^3.0.0
