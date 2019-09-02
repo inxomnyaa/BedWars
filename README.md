@@ -1,11 +1,10 @@
 ![BedWars wide banner!](https://github.com/thebigsmileXD/BedWars/blob/master/resources/xbedwars_icon_wide.png)
 ---
 # BedWars
-<!-- todo activate poggit badges
 [![](https://poggit.pmmp.io/shield.state/BedWars)](https://poggit.pmmp.io/p/BedWars)
 [![](https://poggit.pmmp.io/shield.api/BedWars)](https://poggit.pmmp.io/p/BedWars)
 [![](https://poggit.pmmp.io/shield.dl.total/BedWars)](https://poggit.pmmp.io/p/BedWars)
--->
+
 A new BedWars plugin by XenialDan
 ## Setup
 Set up an arena:
