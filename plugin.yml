@@ -12,8 +12,10 @@ prefix: "[BedWars]"
 permissions:
   bedwars.command:
     description: Base perm for bedwars commands
-    default: op
+    default: true
     children:
+      bedwars.command.join:
+        default: true
       bedwars.command.leave:
         default: true
       bedwars.command.forcestart:

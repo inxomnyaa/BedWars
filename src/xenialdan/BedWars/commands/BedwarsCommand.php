@@ -50,6 +50,26 @@ class BedwarsCommand extends PluginCommand
                         $p->setupArena($sender);
                         break;
                     }
+                case "join":
+                    {
+                        if (!$sender->hasPermission("bedwars.command.join")) {
+                            $sender->sendMessage(TextFormat::RED . "You do not have permission to run this command");
+                            return true;
+                        }
+                        if (API::getArenaOfPlayer($sender) !== null) {
+                            $sender->sendMessage(TextFormat::RED . "You can't join another arena while already in a game");
+                            return true;
+                        }
+                        if (is_null($arena = Loader::getInstance()->getArenas()[$args[1]]??null)) {
+                            $sender->sendMessage(TextFormat::RED . "Arena " . $args[1] . " not found");
+                            return true;
+                        }
+                        if (!$arena->joinTeam($sender)) {
+                            $sender->sendMessage(TextFormat::RED . "Error joining arena");
+                            return true;
+                        }
+                        break;
+                    }
                 case "leave":
                     {
                         if (!$sender->hasPermission("bedwars.command.leave")) {
