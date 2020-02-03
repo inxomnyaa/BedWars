@@ -1,12 +1,12 @@
 <?php
 
-
 namespace xenialdan\BedWars;
 
 use xenialdan\gameapi\Team;
 
 class BedwarsTeam extends Team
 {
+    /** @var bool */
     private $bedDestroyed = false;
 
     /**

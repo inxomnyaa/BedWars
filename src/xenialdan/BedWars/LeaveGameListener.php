@@ -17,7 +17,7 @@ use xenialdan\gameapi\API;
 class LeaveGameListener implements Listener
 {
 
-    public function onDeath(PlayerDeathEvent $ev)
+    public function onDeath(PlayerDeathEvent $ev): void
     {
         if (API::isArenaOf(Loader::getInstance(), ($player = $ev->getPlayer())->getLevel()) && API::isPlaying($player, Loader::getInstance())) {
             $team = API::getTeamOfPlayer($player);
@@ -29,14 +29,14 @@ class LeaveGameListener implements Listener
         }
     }
 
-    public function onDisconnectOrKick(PlayerQuitEvent $ev)
+    public function onDisconnectOrKick(PlayerQuitEvent $ev): void
     {
         if (API::isArenaOf(Loader::getInstance(), $ev->getPlayer()->getLevel()))
             /** @noinspection PhpUnhandledExceptionInspection */
             API::getArenaByLevel(Loader::getInstance(), $ev->getPlayer()->getLevel())->removePlayer($ev->getPlayer());
     }
 
-    public function onLevelChange(EntityLevelChangeEvent $ev)
+    public function onLevelChange(EntityLevelChangeEvent $ev): void
     {
         if ($ev->getEntity() instanceof Player) {
             if (API::isArenaOf(Loader::getInstance(), $ev->getOrigin()) && API::isPlaying($ev->getEntity(), Loader::getInstance()))//TODO test if still calls it twice

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace xenialdan\BedWars;
-
 
 use pocketmine\block\Block;
 use pocketmine\entity\Villager;
@@ -26,14 +24,15 @@ class SetupEventListener implements Listener
      * @priority HIGHEST
      * @param EntitySpawnEvent $e
      */
-    public function spawnShop(EntitySpawnEvent $e){
-        if(!$e->getEntity() instanceof Villager) return;
+    public function spawnShop(EntitySpawnEvent $e): void
+    {
+        if (!$e->getEntity() instanceof Villager) return;
         if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
-        $entity->setRotation(0,0);
+        $entity->setRotation(0, 0);
         $entity->setNameTagVisible(true);
         $entity->setNameTagAlwaysVisible(false);
         $entity->setImmobile();
@@ -45,16 +44,17 @@ class SetupEventListener implements Listener
      * @priority HIGHEST
      * @param EntityDamageEvent $e
      */
-    public function removeOrRotateShop(EntityDamageEvent $e){
-        if(!$e->getEntity() instanceof Villager || !$e instanceof EntityDamageByEntityEvent) return;
-        if(!$e->getDamager() instanceof Player) return;
+    public function removeOrRotateShop(EntityDamageEvent $e): void
+    {
+        if (!$e->getEntity() instanceof Villager || !$e instanceof EntityDamageByEntityEvent) return;
+        if (!$e->getDamager() instanceof Player) return;
         if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
         $e->setCancelled();
-        if($e->getDamager()->isSneaking()){
+        if ($e->getDamager()->isSneaking()) {
             $entity->close();
             return;
         }
@@ -67,7 +67,7 @@ class SetupEventListener implements Listener
      * @priority HIGHEST
      * @param BlockPlaceEvent $e
      */
-    public function setSpawns(BlockPlaceEvent $e)
+    public function setSpawns(BlockPlaceEvent $e): void
     {
         if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
@@ -91,7 +91,7 @@ class SetupEventListener implements Listener
      * @priority HIGHEST
      * @param BlockBreakEvent $e
      */
-    public function removeItemSpawns(BlockBreakEvent $e)
+    public function removeItemSpawns(BlockBreakEvent $e): void
     {
         if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
@@ -145,7 +145,7 @@ class SetupEventListener implements Listener
      * @priority HIGHEST
      * @param PlayerInteractEvent $e
      */
-    public function setItemSpawns(PlayerInteractEvent $e)
+    public function setItemSpawns(PlayerInteractEvent $e): void
     {
         if ($e->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
         if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;

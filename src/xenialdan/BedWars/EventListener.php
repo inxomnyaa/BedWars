@@ -26,7 +26,7 @@ use xenialdan\gameapi\Arena;
 class EventListener implements Listener
 {
 
-    public function onDamage(EntityDamageEvent $event)
+    public function onDamage(EntityDamageEvent $event): void
     {
         if (API::isArenaOf(Loader::getInstance(), $event->getEntity()->getLevel())) {
             if (!$event->getEntity() instanceof Player) {
@@ -63,7 +63,7 @@ class EventListener implements Listener
         }*/
     }
 
-    public function onBlockBreakEvent(BlockBreakEvent $event)
+    public function onBlockBreakEvent(BlockBreakEvent $event): void
     {
         $level = ($entity = $event->getPlayer())->getLevel();
         if (API::isPlaying($entity, Loader::getInstance())) {
@@ -111,7 +111,7 @@ class EventListener implements Listener
         }
     }
 
-    public function onBlockPlaceEvent(BlockPlaceEvent $event)
+    public function onBlockPlaceEvent(BlockPlaceEvent $event): void
     {
         if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) return;
         if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getBlock()->getLevel())) instanceof Arena) {

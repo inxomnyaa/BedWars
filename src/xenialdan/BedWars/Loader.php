@@ -57,12 +57,12 @@ class Loader extends Game
         return self::$instance;
     }
 
-    public function onLoad()
+    public function onLoad(): void
     {
         self::$instance = $this;
     }
 
-    public function onEnable()
+    public function onEnable(): void
     {
         if (!InvMenuHandler::isRegistered()) InvMenuHandler::register($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
@@ -181,7 +181,7 @@ class Loader extends Game
                     $player->sendForm($form);
                 });
                 $player->sendForm($form);
-            } elseif ($data === $ea) {
+            } else if ($data === $ea) {
                 $form = new SimpleForm("Edit Bedwars arena");
                 $build = "Build / Edit item spawners";
                 $button = new Button($build);
@@ -202,103 +202,103 @@ class Loader extends Game
                 $form->setCallable(function (Player $player, $data) use ($addvillager, $editspawnpoints, $delete, $build) {
                     switch ($data) {
                         case $build:
-                            {
-                                $form = new SimpleForm($build, "Select the arena you'd like to build in");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::CREATIVE);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    $player->sendMessage(TextFormat::GOLD . "You may now freely edit the arena.");
-                                    $player->sendMessage(TextFormat::GOLD . "Tap or right click gold blocks, iron blocks or uncolored terracotta blocks to activate the blocks as item droppers for gold, silver and bronze. Break the blocks to remove them");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
+                        {
+                            $form = new SimpleForm($build, "Select the arena you'd like to build in");
+                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            $form->setCallable(function (Player $player, $data) {
+                                $worldname = $data;
+                                $arena = API::getArenaByLevelName($this, $worldname);
+                                $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
+                                $arena->stopArena();
+                                $arena->setState(Arena::SETUP);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                $player->teleport($arena->getLevel()->getSpawnLocation());
+                                $player->setGamemode(Player::CREATIVE);
+                                $player->setAllowFlight(true);
+                                $player->setFlying(true);
+                                $player->getInventory()->clearAll();
+                                $arena->getLevel()->stopTime();
+                                $arena->getLevel()->setTime(Level::TIME_DAY);
+                                $player->sendMessage(TextFormat::GOLD . "You may now freely edit the arena.");
+                                $player->sendMessage(TextFormat::GOLD . "Tap or right click gold blocks, iron blocks or uncolored terracotta blocks to activate the blocks as item droppers for gold, silver and bronze. Break the blocks to remove them");
+                            });
+                            $player->sendForm($form);
+                            break;
+                        }
                         case $editspawnpoints:
-                            {
-                                $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to edit the spawn points of");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::SURVIVAL);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    foreach ($arena->getTeams() as $team) {
-                                        $item = ItemFactory::get(Item::CONCRETE, API::getMetaByColor($team->getColor()));
-                                        $item->setLore(["Spawn point for the " . $team->getColor() . $team->getName() . TextFormat::RESET . " team", "Place to set the spawn point for this team"]);
-                                        $item->setCustomName($team->getColor() . $team->getName());
-                                        $player->getInventory()->addItem($item);
-                                    }
-                                    $player->sendMessage(TextFormat::GOLD . "Place the concrete blocks to set the team spawn points");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
-                        case $addvillager:
-                            {
-                                $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to add a villager shop in");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $arena = API::getArenaByLevelName($this, $worldname);
-                                    $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
-                                    $arena->stopArena();
-                                    $arena->setState(Arena::SETUP);
-                                    if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
-                                    $player->teleport($arena->getLevel()->getSpawnLocation());
-                                    $player->setGamemode(Player::SURVIVAL);
-                                    $player->setAllowFlight(true);
-                                    $player->setFlying(true);
-                                    $player->getInventory()->clearAll();
-                                    $arena->getLevel()->stopTime();
-                                    $arena->getLevel()->setTime(Level::TIME_DAY);
-                                    $item = ItemFactory::get(Item::SPAWN_EGG, Entity::VILLAGER, 64);
-                                    $item->setLore(["Use to spawn a villager shop", "Sneak and hit a villager to remove it", "Hit a villager to rotate him 45 degrees"]);
-                                    $item->setCustomName(TextFormat::GOLD . TextFormat::BOLD . "Shop");
+                        {
+                            $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to edit the spawn points of");
+                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            $form->setCallable(function (Player $player, $data) {
+                                $worldname = $data;
+                                $arena = API::getArenaByLevelName($this, $worldname);
+                                $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
+                                $arena->stopArena();
+                                $arena->setState(Arena::SETUP);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                $player->teleport($arena->getLevel()->getSpawnLocation());
+                                $player->setGamemode(Player::SURVIVAL);
+                                $player->setAllowFlight(true);
+                                $player->setFlying(true);
+                                $player->getInventory()->clearAll();
+                                $arena->getLevel()->stopTime();
+                                $arena->getLevel()->setTime(Level::TIME_DAY);
+                                foreach ($arena->getTeams() as $team) {
+                                    $item = ItemFactory::get(Item::CONCRETE, API::getMetaByColor($team->getColor()));
+                                    $item->setLore(["Spawn point for the " . $team->getColor() . $team->getName() . TextFormat::RESET . " team", "Place to set the spawn point for this team"]);
+                                    $item->setCustomName($team->getColor() . $team->getName());
                                     $player->getInventory()->addItem($item);
-                                    $player->sendMessage(TextFormat::GOLD . "Use the spawn egg to add a villager. Sneak and hit a villager to remove it. Hit a villager to rotate him 45 degrees");
-                                });
-                                $player->sendForm($form);
-                                break;
-                            }
+                                }
+                                $player->sendMessage(TextFormat::GOLD . "Place the concrete blocks to set the team spawn points");
+                            });
+                            $player->sendForm($form);
+                            break;
+                        }
+                        case $addvillager:
+                        {
+                            $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to add a villager shop in");
+                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            $form->setCallable(function (Player $player, $data) {
+                                $worldname = $data;
+                                $arena = API::getArenaByLevelName($this, $worldname);
+                                $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
+                                $arena->stopArena();
+                                $arena->setState(Arena::SETUP);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                $player->teleport($arena->getLevel()->getSpawnLocation());
+                                $player->setGamemode(Player::SURVIVAL);
+                                $player->setAllowFlight(true);
+                                $player->setFlying(true);
+                                $player->getInventory()->clearAll();
+                                $arena->getLevel()->stopTime();
+                                $arena->getLevel()->setTime(Level::TIME_DAY);
+                                $item = ItemFactory::get(Item::SPAWN_EGG, Entity::VILLAGER, 64);
+                                $item->setLore(["Use to spawn a villager shop", "Sneak and hit a villager to remove it", "Hit a villager to rotate him 45 degrees"]);
+                                $item->setCustomName(TextFormat::GOLD . TextFormat::BOLD . "Shop");
+                                $player->getInventory()->addItem($item);
+                                $player->sendMessage(TextFormat::GOLD . "Use the spawn egg to add a villager. Sneak and hit a villager to remove it. Hit a villager to rotate him 45 degrees");
+                            });
+                            $player->sendForm($form);
+                            break;
+                        }
                         case $delete:
-                            {
-                                $form = new SimpleForm("Delete Bedwars arena", "Select an arena to remove. The world will NOT be deleted");
-                                foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
-                                $form->setCallable(function (Player $player, $data) {
-                                    $worldname = $data;
-                                    $form = new ModalForm("Confirm delete", "Please confirm that you want to delete the arena \"$worldname\"", "Delete $worldname", "Abort");
-                                    $form->setCallable(function (Player $player, $data) use ($worldname) {
-                                        if ($data) {
-                                            $arena = API::getArenaByLevelName($this, $worldname);
-                                            $this->deleteArena($arena) ? $player->sendMessage(TextFormat::GREEN . "Successfully deleted the arena") : $player->sendMessage(TextFormat::RED . "Removed the arena, but config file could not be deleted!");
-                                        }
-                                    });
-                                    $player->sendForm($form);
+                        {
+                            $form = new SimpleForm("Delete Bedwars arena", "Select an arena to remove. The world will NOT be deleted");
+                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            $form->setCallable(function (Player $player, $data) {
+                                $worldname = $data;
+                                $form = new ModalForm("Confirm delete", "Please confirm that you want to delete the arena \"$worldname\"", "Delete $worldname", "Abort");
+                                $form->setCallable(function (Player $player, $data) use ($worldname) {
+                                    if ($data) {
+                                        $arena = API::getArenaByLevelName($this, $worldname);
+                                        $this->deleteArena($arena) ? $player->sendMessage(TextFormat::GREEN . "Successfully deleted the arena") : $player->sendMessage(TextFormat::RED . "Removed the arena, but config file could not be deleted!");
+                                    }
                                 });
                                 $player->sendForm($form);
-                                break;
-                            }
+                            });
+                            $player->sendForm($form);
+                            break;
+                        }
                     }
                 });
                 $player->sendForm($form);
@@ -311,7 +311,7 @@ class Loader extends Game
      * @param Arena $arena
      * @param Player $player
      */
-    public function removePlayer(Arena $arena, Player $player)
+    public function removePlayer(Arena $arena, Player $player): void
     {
         $arena->bossbar->setTitle(count(array_filter($arena->getTeams(), function (Team $team): bool {
                 return count($team->getPlayers()) > 0;
@@ -346,7 +346,7 @@ class Loader extends Game
     {
     }
 
-    public function spawnBronze(Arena $arena)
+    public function spawnBronze(Arena $arena): void
     {
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -389,7 +389,7 @@ class Loader extends Game
         }
     }
 
-    public function spawnSilver(Arena $arena)
+    public function spawnSilver(Arena $arena): void
     {
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -410,7 +410,7 @@ class Loader extends Game
         }
     }
 
-    public function spawnGold(Arena $arena)
+    public function spawnGold(Arena $arena): void
     {
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -442,17 +442,17 @@ class Loader extends Game
     }
 
     /**
-     * Callback function for @see array_filter
-     * If return value is true, this entity will be deleted.
-     * @param Entity $entity
+     * Callback function for @param Entity $entity
      * @return bool
+     * @see array_filter
+     * If return value is true, this entity will be deleted.
      */
     public function removeEntityOnArenaReset(Entity $entity): bool
     {
         return $entity instanceof ItemEntity || $entity instanceof PrimedTNT || $entity instanceof Arrow;
     }
 
-    public function openShop(Player $player)
+    public function openShop(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName(TextFormat::RED . "Bed" . TextFormat::WHITE . "Wars " . TextFormat::RESET . "Shop")->readonly();
         $menu->getInventory()->setContents([
@@ -489,7 +489,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopArmor(Player $player)
+    private function openShopArmor(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Armor shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
@@ -522,7 +522,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopBlock(Player $player)
+    private function openShopBlock(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Block shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
@@ -543,7 +543,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopPickaxe(Player $player)
+    private function openShopPickaxe(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Pickaxe shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
@@ -566,7 +566,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopWeapons(Player $player)
+    private function openShopWeapons(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Weapon shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
@@ -603,7 +603,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopBow(Player $player)
+    private function openShopBow(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Bow shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
@@ -634,7 +634,7 @@ class Loader extends Game
         $menu->send($player);
     }
 
-    private function openShopSpecial(Player $player)
+    private function openShopSpecial(Player $player): void
     {
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Special shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());

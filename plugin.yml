@@ -6,8 +6,8 @@ api: [3.11]
 author: XenialDan
 load: POSTWORLD
 softdepend:
-- DEVirion
-- gamereward
+  - DEVirion
+  - gamereward
 prefix: "[BedWars]"
 permissions:
   bedwars.command:

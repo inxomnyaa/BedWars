@@ -1,8 +1,6 @@
 <?php
 
-
 namespace xenialdan\BedWars\task;
-
 
 use pocketmine\scheduler\Task;
 use xenialdan\BedWars\Loader;
@@ -10,6 +8,7 @@ use xenialdan\gameapi\Arena;
 
 class SpawnItemsTask extends Task
 {
+    /** @var Arena */
     private $arena;
 
     public function __construct(Arena $arena)

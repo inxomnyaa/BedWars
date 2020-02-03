@@ -16,7 +16,7 @@ use pocketmine\utils\TextFormat;
 class JoinGameListener implements Listener
 {
 
-    public function onInteract(PlayerInteractEvent $event)
+    public function onInteract(PlayerInteractEvent $event): void
     {
         $action = $event->getAction();
         $block = $event->getBlock();
@@ -28,16 +28,15 @@ class JoinGameListener implements Listener
         }
     }
 
-    public function onClickSign($event, array $text)
+    private function onClickSign(PlayerInteractEvent $event, array $text): void
     {
-        /** @var PlayerInteractEvent $event */
         if (strpos(strtolower(TextFormat::clean($text[0])), strtolower(TextFormat::clean(Loader::getInstance()->getPrefix()))) !== false) {
             $player = $event->getPlayer();
-            if (is_null($arena = Loader::getInstance()->getArenas()[TextFormat::clean($text[1])]??null)) {
+            if (is_null($arena = Loader::getInstance()->getArenas()[TextFormat::clean($text[1])] ?? null)) {
                 $player->sendMessage(TextFormat::RED . 'Arena not found');
                 return;
             }
-            if(!$arena->joinTeam($player)) {
+            if (!$arena->joinTeam($player)) {
                 $player->sendMessage(TextFormat::RED . 'Error joining');
             }
         }

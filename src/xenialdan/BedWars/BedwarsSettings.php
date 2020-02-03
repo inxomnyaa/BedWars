@@ -1,8 +1,6 @@
 <?php
 
-
 namespace xenialdan\BedWars;
-
 
 use pocketmine\block\BlockIds;
 use xenialdan\gameapi\DefaultSettings;
@@ -20,8 +18,11 @@ class BedwarsSettings extends DefaultSettings
     public $placeBlockIds = [BlockIds::SANDSTONE, BlockIds::END_STONE, BlockIds::CHEST, BlockIds::ENDER_CHEST, BlockIds::BED_BLOCK];
     public $noBed = true;
     public $startNoWalk = false;
+    /** @var array */
     public $bronze = [];
+    /** @var array */
     public $silver = [];
+    /** @var array */
     public $gold = [];
     public $noDropItem = false;
 }
