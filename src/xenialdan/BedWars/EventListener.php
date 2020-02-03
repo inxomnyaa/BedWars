@@ -17,7 +17,6 @@ use xenialdan\customui\elements\Button;
 use xenialdan\customui\windows\SimpleForm;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
-use xenialdan\gameapi\Team;
 
 /**
  * Class EventListener
@@ -120,9 +119,9 @@ class EventListener implements Listener
             if (($arena->getState() === Arena::STARTING || $arena->getState() === Arena::WAITING) && $event->getItem()->getId() === ItemIds::BED) {
                 $event->setCancelled();
                 $player = $event->getPlayer();
-                /** @var Team $team */
-                if(count(($team = $arena->getTeamByPlayer($player))->getPlayers()) <= $team->getMinPlayers()){
-                    $player->sendMessage(TextFormat::RED.TextFormat::BOLD."Can not leave the team because a minimum of ".$team->getMinPlayers(). " players is required for this team");
+                $team = $arena->getTeamByPlayer($player);
+                if (count($team->getPlayers()) <= $team->getMinPlayers()) {
+                    $player->sendMessage(TextFormat::RED . TextFormat::BOLD . "Can not leave the team because a minimum of " . $team->getMinPlayers() . " players is required for this team");
                     return;
                 }
                 $form = new SimpleForm("Switch Team");
