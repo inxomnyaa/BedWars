@@ -130,7 +130,7 @@ class Loader extends Game
                 $form->addButton(new Button($nw));
                 $ew = "Existing world";
                 $form->addButton(new Button($ew));
-                $form->setCallable(function (Player $player, $data) use ($ew, $nw) {
+                $form->setCallable(function (Player $player, $data) use ($ew) {
                     $new = true;
                     if ($data === $ew) {
                         $new = false;
@@ -152,7 +152,7 @@ class Loader extends Game
                         $form = new CustomForm("Bedwars teams setup");
                         $form->addElement(new StepSlider("Teams", array_keys(array_fill(2, 7, ""))));
                         $form->addElement(new StepSlider("Maximum players per team", array_keys(array_fill(1, 5, ""))));
-                        $form->setCallable(function (Player $player, $data) use ($new, $setup) {
+                        $form->setCallable(function (Player $player, $data) use ($setup) {
                             $setup["teamcount"] = intval($data[0]);
                             $setup["maxplayers"] = intval($data[1]);
                             $teams = self::getTeamNamesByAmount($setup["teamcount"]);

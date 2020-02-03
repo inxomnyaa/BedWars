@@ -131,7 +131,7 @@ class EventListener implements Listener
                     $button->addImage(Button::IMAGE_TYPE_PATH, "textures/items/bed_" . strtolower($team->getName()));
                     $form->addButton($button);
                 }
-                $form->setCallable(function (Player $player, $data) use ($arena, $form) {
+                $form->setCallable(function (Player $player, $data) use ($arena) {
                     $player->getInventory()->clearAll();
                     $data = TextFormat::clean(substr($data, 0, strpos($data, " ")));
                     $arena->joinTeam($player, $data);
