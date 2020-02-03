@@ -623,9 +623,9 @@ class Loader extends Game
             $b1,
             $b2,
             $b3,
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 4, 0.25 * 4, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 8, 0.25 * 8, self::SILVER),
-            $this->generateShopItem(Item::get(ItemIds::ARROW), 16, 0.25 * 16, self::SILVER)
+            $this->generateShopItem(Item::get(ItemIds::ARROW), 4, (int)0.25 * 4, self::SILVER),
+            $this->generateShopItem(Item::get(ItemIds::ARROW), 8, (int)0.25 * 8, self::SILVER),
+            $this->generateShopItem(Item::get(ItemIds::ARROW), 16, (int)0.25 * 16, self::SILVER)
         ]);
         $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
             $this->buyItem($clicked, $player);
