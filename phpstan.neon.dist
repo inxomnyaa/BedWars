@@ -1,0 +1,19 @@
+parameters:
+    level: 1
+
+    checkMissingIterableValueType: false
+
+    ignoreErrors: []
+
+    paths:
+        - /source/src
+    autoload_files:
+        - phar:///pocketmine/PocketMine-MP.phar/vendor/autoload.php
+    autoload_directories:
+        - /source/src
+        - phar:///source/vendor/customui.phar/src
+        - phar:///source/vendor/apibossbar.phar/src
+        - phar:///source/vendor/gameapi.phar/src
+        - phar:///source/vendor/InvMenu.phar/src
+    excludes_analyse:
+        - source/vendor

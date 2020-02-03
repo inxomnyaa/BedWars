@@ -1,0 +1,36 @@
+name: PHPStan
+
+on: [push, pull_request]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: Create Vendor Directory
+        run: |
+          echo Making directory...
+          mkdir vendor
+          echo Directory made.
+      - name: wget virions, customui
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/customui.phar https://poggit.pmmp.io/r/44509/customui_dev-31.phar
+      - name: wget virions, apibossbar
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/apibossbar.phar https://poggit.pmmp.io/r/74673/apibossbar_dev-3.phar
+      - name: wget virions, gameapi
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/gameapi.phar https://poggit.pmmp.io/r/74976/gameapi_dev-16.phar
+      - name: wget virions, InvMenu
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/InvMenu.phar https://poggit.pmmp.io/r/70989/InvMenu_dev-78.phar
+      - name: Run PHPStan
+        uses: nxtlvlsoftware/pmmp-phpstan-action@3
+        with:
+          phpstan-config: phpstan.neon.dist
