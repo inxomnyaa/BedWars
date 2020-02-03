@@ -73,9 +73,8 @@ class EventListener implements Listener
                 if ($bedTile instanceof \pocketmine\tile\Bed) {
                     $event->setDrops([]);
                     $c = $bedTile->getColor();
-                    /** @var BedwarsTeam $attackedTeam */
                     $attackedTeam = API::getTeamByColor(Loader::getInstance(), $event->getBlock()->getLevel(), API::getColorByMeta($c));
-                    if (is_null($attackedTeam)) {//no team but bed for color
+                    if (!$attackedTeam instanceof BedwarsTeam) {//no team but bed for color
                         Loader::getInstance()->getLogger()->notice("Tried to break a bed for a non existing team. You might want to fix your map. Bed: Color: " . API::getColorByMeta($c) . "" . $event->getBlock() . " " . $event->getBlock()->asVector3() . " " . $event->getBlock()->getLevel()->getName());
                         return;
                     }

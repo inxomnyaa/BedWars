@@ -147,7 +147,7 @@ class SetupEventListener implements Listener
      */
     public function setItemSpawns(PlayerInteractEvent $e)
     {
-        if (!$e->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
+        if ($e->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
         if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
         if ($arena->getState() !== Arena::SETUP) {
