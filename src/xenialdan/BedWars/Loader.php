@@ -150,8 +150,8 @@ class Loader extends Game
                         }
                         Server::getInstance()->loadLevel($setup["name"]);
                         $form = new CustomForm("Bedwars teams setup");
-                        $form->addElement(new StepSlider("Teams", array_keys(array_fill(2, 7, ""))));
-                        $form->addElement(new StepSlider("Maximum players per team", array_keys(array_fill(1, 5, ""))));
+                        $form->addElement(new StepSlider("Teams", ['2', '3', '4', '5', '6', '7', '8']));
+                        $form->addElement(new StepSlider("Maximum players per team", ['1', '2', '3', '4', '5']));
                         $form->setCallable(function (Player $player, $data) use ($setup) {
                             $setup["teamcount"] = intval($data[0]);
                             $setup["maxplayers"] = intval($data[1]);
@@ -527,14 +527,14 @@ class Loader extends Game
         $menu = InvMenu::create(InvMenu::TYPE_CHEST)->setName("Block shop")->readonly();
         $menu->setInventoryCloseListener($this->subToMainShop());
         $menu->getInventory()->setContents([
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 4, 0.5 * 4, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 16, 0.5 * 16, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 32, 0.5 * 32, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 64, 0.5 * 64, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 1, 8 * 1, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 4, 8 * 4, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 16, 8 * 16, self::BRONZE),
-            $this->generateShopItem(Item::get(ItemIds::END_STONE), 32, 8 * 32, self::BRONZE)
+            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 4, (int)0.5 * 4, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 16, (int)0.5 * 16, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 32, (int)0.5 * 32, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::SANDSTONE), 64, (int)0.5 * 64, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::END_STONE), 1, (int)8 * 1, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::END_STONE), 4, (int)8 * 4, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::END_STONE), 16, (int)8 * 16, self::BRONZE),
+            $this->generateShopItem(Item::get(ItemIds::END_STONE), 32, (int)8 * 32, self::BRONZE)
         ]);
         $menu->setListener(function (Player $player, Item $clicked, Item $clickedWith, SlotChangeAction $action): bool {
             $this->buyItem($clicked, $player);
