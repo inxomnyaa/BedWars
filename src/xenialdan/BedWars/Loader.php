@@ -23,6 +23,7 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\Player;
+use pocketmine\plugin\PluginException;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
@@ -72,7 +73,9 @@ class Loader extends Game
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
-        foreach (glob($this->getDataFolder() . "*.json") as $v) {
+        $glob = glob($this->getDataFolder() . "*.json");
+        if ($glob === false) throw new PluginException("Could not load arena settings json file");
+        foreach ($glob as $v) {
             $this->addArena($this->getNewArena($v));
         }
     }

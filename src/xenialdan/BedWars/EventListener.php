@@ -2,6 +2,7 @@
 
 namespace xenialdan\BedWars;
 
+use InvalidArgumentException;
 use pocketmine\block\Bed;
 use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
@@ -131,7 +132,9 @@ class EventListener implements Listener
                 }
                 $form->setCallable(function (Player $player, $data) use ($arena) {
                     $player->getInventory()->clearAll();
-                    $data = TextFormat::clean(substr($data, 0, strpos($data, " ")));
+                    $length = strpos($data, " ");
+                    if ($length === false) throw new InvalidArgumentException("Invalid form data received");
+                    $data = TextFormat::clean(substr($data, 0, $length));
                     $arena->joinTeam($player, $data);
                 });
                 $player->sendForm($form);
