@@ -93,18 +93,18 @@ class EventListener implements Listener
                             $event->setCancelled(false);
                             return;
                         }
-                        Loader::getInstance()->getServer()->broadcastTitle(TextFormat::RED . "Your Teams bed was destroyed", TextFormat::RED . "by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $attackedTeam->getPlayers());
                         foreach ($attackedTeam->getPlayers() as $attackedTeamPlayer) {
                             $attackedTeamPlayer->setSpawn($attackedTeamPlayer->getServer()->getDefaultLevel()->getSafeSpawn());
                         }
-                        Loader::getInstance()->getServer()->broadcastTitle($attackedTeam->getColor() . "The bed of team " . $attackedTeam->getName(), $attackedTeam->getColor() . "was destroyed by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $attackedTeam->getPlayers());
+                        Loader::getInstance()->getServer()->broadcastTitle($attackedTeam->getColor() . "The bed of team " . $attackedTeam->getName(), $attackedTeam->getColor() . "was destroyed by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $level->getPlayers());
+                        Loader::getInstance()->getServer()->broadcastMessage($attackedTeam->getColor() . "The bed of team " . $attackedTeam->getName() . " was destroyed by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), $level->getPlayers());
+                        Loader::getInstance()->getServer()->broadcastTitle(TextFormat::RED . "Your Teams bed was destroyed", TextFormat::RED . "by team " . $teamOfPlayer->getColor() . $teamOfPlayer->getName(), -1, -1, -1, $attackedTeam->getPlayers());
                         $spk = new PlaySoundPacket();
                         [$spk->x, $spk->y, $spk->z] = [$entity->x, $entity->y, $entity->z];
-                        $spk->volume = 1;
-                        $spk->pitch = 0.0;
-                        $spk->soundName = "mob.enderdragon.end";
-                        var_dump($spk);
-                        $entity->getLevel()->broadcastGlobalPacket($spk);
+                        $spk->volume = 1.0;
+                        $spk->pitch = 1.0;
+                        $spk->soundName = "mob.enderdragon.death";
+                        $level->broadcastGlobalPacket($spk);
                         #if (count($arena->getPlayers()) <= 1) $arena->stopArena();
                     }
                 }
