@@ -20,7 +20,7 @@ class JoinSubCommand extends BaseSubCommand
      */
     protected function prepare(): void
     {
-        $this->setPermission("backpack.command.join");
+        $this->setPermission("bedwars.command.join");
         $this->registerArgument(0, new JoinableArenaEnumArgument("Arena", true));
     }
 
