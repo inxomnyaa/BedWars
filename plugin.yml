@@ -9,6 +9,7 @@ softdepend:
   - DEVirion
   - gamereward
 prefix: "[BedWars]"
+website: "https://github.com/thebigsmileXD/BedWars"
 permissions:
   bedwars.command:
     description: Base perm for bedwars commands
@@ -21,8 +22,6 @@ permissions:
       bedwars.command.forcestart:
         default: op
       bedwars.command.stop:
-        default: op
-      bedwars.command.endsetup:
         default: op
       bedwars.command.setup:
         default: op

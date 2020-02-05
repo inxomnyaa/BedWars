@@ -4,148 +4,44 @@ declare(strict_types=1);
 
 namespace xenialdan\BedWars\commands;
 
+use CortexPE\Commando\args\BaseArgument;
+use CortexPE\Commando\BaseCommand;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
-use pocketmine\utils\TextFormat;
-use xenialdan\BedWars\Loader;
-use xenialdan\gameapi\API;
-use xenialdan\gameapi\Game;
+use xenialdan\BedWars\commands\subcommand\EndSetupSubCommand;
+use xenialdan\BedWars\commands\subcommand\ForcestartSubCommand;
+use xenialdan\BedWars\commands\subcommand\HelpSubCommand;
+use xenialdan\BedWars\commands\subcommand\InfoSubCommand;
+use xenialdan\BedWars\commands\subcommand\JoinSubCommand;
+use xenialdan\BedWars\commands\subcommand\LeaveSubCommand;
+use xenialdan\BedWars\commands\subcommand\SetupSubCommand;
+use xenialdan\BedWars\commands\subcommand\StopSubCommand;
 
-class BedwarsCommand extends PluginCommand
+class BedwarsCommand extends BaseCommand
 {
-    public function __construct(Plugin $plugin)
+
+    /**
+     * This is where all the arguments, permissions, sub-commands, etc would be registered
+     */
+    protected function prepare(): void
     {
-        parent::__construct("bw", $plugin);
-        $this->setAliases(["bedwars"]);
         $this->setPermission("bedwars.command");
-        $this->setDescription("Bedwars commands for setup or leaving a game");
-        $this->setUsage("/bw | /bw setup | /bw endsetup | /bw leave | /bw forcestart | /bw stop | /bw status | /bw info | /bw help");
+        $this->registerSubCommand(new JoinSubCommand("join", "Finds an available game to join. Specify an arena name to join it."));
+        $this->registerSubCommand(new LeaveSubCommand("leave", "Leave the current game"));
+        $this->registerSubCommand(new ForcestartSubCommand("forcestart", "Immediately start the game"));
+        $this->registerSubCommand(new StopSubCommand("stop", "Stops the running game"));//TODO add optional runningarena arg to remotely stop
+        $this->registerSubCommand(new SetupSubCommand("setup", "Opens the arena setup UI. Remember to run /bw endsetup when finished to save changes"));
+        $this->registerSubCommand(new EndSetupSubCommand("endsetup", "Stops the setup process of an arena. Must be executed to save changes upon /bw setup"));
+        $this->registerSubCommand(new HelpSubCommand("help", "Sends a usage message"));//TODO make more helpful. Book?
+        $this->registerSubCommand(new InfoSubCommand("info", "Information about XBedWars by XenialDan"));
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args)
+    /**
+     * @param CommandSender $sender
+     * @param string $aliasUsed
+     * @param BaseArgument[] $args
+     */
+    public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        /** @var Player $sender */
-        $return = $sender->hasPermission($this->getPermission());
-        if (!$return) {
-            $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-            return true;
-        }
-        if (!$sender instanceof Player) {
-            $sender->sendMessage(TextFormat::RED . "This command is for players only");
-            return false;
-        }
-        try {
-            $return = true;
-            switch ($args[0] ?? "help") {
-                case "setup":
-                {
-                    if (!$sender->hasPermission("bedwars.command.setup")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    /** @var Game $p */
-                    $p = $this->getPlugin();
-                    $p->setupArena($sender);
-                    break;
-                }
-                case "join":
-                {
-                    if (!$sender->hasPermission("bedwars.command.join")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permission to run this command");
-                        return true;
-                    }
-                    if (API::getArenaOfPlayer($sender) !== null) {
-                        $sender->sendMessage(TextFormat::RED . "You can't join another arena while already in a game");
-                        return true;
-                    }
-                    if (is_null($arena = Loader::getInstance()->getArenas()[$args[1]] ?? null)) {
-                        $sender->sendMessage(TextFormat::RED . "Arena " . $args[1] . " not found");
-                        return true;
-                    }
-                    if (!$arena->joinTeam($sender)) {
-                        $sender->sendMessage(TextFormat::RED . "Error joining arena");
-                        return true;
-                    }
-                    break;
-                }
-                case "leave":
-                {
-                    if (!$sender->hasPermission("bedwars.command.leave")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    $arena = API::getArenaOfPlayer($sender);
-                    if (is_null($arena) || !API::isArenaOf($this->getPlugin(), $arena->getLevel())) {
-                        /** @var Game $plugin */
-                        $plugin = $this->getPlugin();
-                        $sender->sendMessage(TextFormat::RED . "It appears that you are not playing " . $plugin->getPrefix());
-                        return true;
-                    }
-                    if (API::isPlaying($sender, $this->getPlugin())) $arena->removePlayer($sender);
-                    break;
-                }
-                case "endsetup":
-                {
-                    if (!$sender->hasPermission("bedwars.command.endsetup")) {//TODO only when setup
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    /** @var Game $p */
-                    $p = $this->getPlugin();
-                    $p->endSetupArena($sender);
-                    break;
-                }
-                case "stop":
-                {
-                    if (!$sender->hasPermission("bedwars.command.stop")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    API::getArenaByLevel(Loader::getInstance(), $sender->getLevel())->stopArena();
-                    break;
-                }
-                case "forcestart":
-                {
-                    if (!$sender->hasPermission("bedwars.command.forcestart")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    $arena = API::getArenaOfPlayer($sender);
-                    if (is_null($arena) || !API::isArenaOf($this->getPlugin(), $arena->getLevel())) {
-                        /** @var Game $plugin */
-                        $plugin = $this->getPlugin();
-                        $sender->sendMessage(TextFormat::RED . "It appears that you are not playing " . $plugin->getPrefix());
-                        return true;
-                    }
-                    $arena->startTimer($arena->getOwningGame());
-                    $arena->forcedStart = true;
-                    $arena->setTimer(5);
-                    $sender->getServer()->broadcastMessage("Arena will start immediately due to a forced start by " . $sender->getDisplayName(), $arena->getPlayers());
-                    break;
-                }
-                case "help":
-                {
-                    if (!$sender->hasPermission("bedwars.command.help")) {
-                        $sender->sendMessage(TextFormat::RED . "You do not have permissions to run this command");
-                        return true;
-                    }
-                    $sender->sendMessage($this->getUsage());
-                    $return = true;
-                    break;
-                }
-                default:
-                {
-                    $return = false;
-                    throw new \InvalidArgumentException("Unknown argument supplied: " . $args[0]);
-                }
-            }
-        } catch (\Throwable $error) {
-            $this->getPlugin()->getLogger()->logException($error);
-            $return = false;
-        } finally {
-            return $return;
-        }
+        if (empty($args)) $this->sendUsage();
     }
 }

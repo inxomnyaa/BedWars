@@ -71,6 +71,9 @@ class Loader extends Game
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SetupEventListener(), $this);
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
+        $this->getServer()->getCommandMap()->registerAll($this->getDescription()->getName(), [
+            new BedwarsCommand("bedwars", "XBedWars commands", ["bw"])
+        ]);
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         $glob = glob($this->getDataFolder() . "*.json");
