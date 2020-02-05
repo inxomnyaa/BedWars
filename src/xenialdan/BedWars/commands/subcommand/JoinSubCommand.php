@@ -41,11 +41,9 @@ class JoinSubCommand extends BaseSubCommand
         $arena = null;
         if (empty(trim(($targetArenaName = $args["Arena"] ?? "")))) {
             $sender->sendMessage("No arena selected, trying to find a random arena");
-            $available = array_values(array_map(function (Arena $arena): string {
-                return $arena->getLevelName();
-            }, array_filter($p->getArenas(), function (Arena $arena): bool {
+            $available = array_filter($p->getArenas(), function (Arena $arena): bool {
                 return ($arena->getState() === Arena::IDLE || $arena->getState() === Arena::WAITING);
-            })));
+            });
             if (empty($available)) {
                 $sender->sendMessage(TextFormat::RED . "No free arena found. Try again later");
                 return;
