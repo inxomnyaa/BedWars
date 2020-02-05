@@ -56,10 +56,6 @@ class JoinSubCommand extends BaseSubCommand
                 return;
             }
         }
-        if (is_null($arena)) {
-            $sender->sendMessage(TextFormat::RED . "No arena found");
-            return;
-        }
         if (!$arena->joinTeam($sender)) {
             $sender->sendMessage(TextFormat::RED . "Error joining arena");
             return;
