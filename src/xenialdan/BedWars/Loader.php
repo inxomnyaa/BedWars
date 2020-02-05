@@ -2,6 +2,7 @@
 
 namespace xenialdan\BedWars;
 
+use CortexPE\Commando\PacketHooker;
 use muqsit\invmenu\inventories\BaseFakeInventory;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\InvMenuHandler;
@@ -66,13 +67,11 @@ class Loader extends Game
     public function onEnable(): void
     {
         if (!InvMenuHandler::isRegistered()) InvMenuHandler::register($this);
+        if (!PacketHooker::isRegistered()) PacketHooker::register($this);
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SetupEventListener(), $this);
-        $this->getServer()->getCommandMap()->registerAll($this->getDescription()->getName(), [
-            new BedwarsCommand("bedwars", "XBedWars commands", ["bw"])
-        ]);
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         $glob = glob($this->getDataFolder() . "*.json");
@@ -80,6 +79,9 @@ class Loader extends Game
         foreach ($glob as $v) {
             $this->addArena($this->getNewArena($v));
         }
+        $this->getServer()->getCommandMap()->registerAll("BedWars", [
+            new BedwarsCommand("bedwars", "XBedWars commands", ["bw"])
+        ]);
     }
 
     public function getNewArena(string $settingsPath): Arena
@@ -438,9 +440,15 @@ class Loader extends Game
     /**
      * Called right when a player joins a game in an arena. Used to set up players
      * @param Player $player
+     * @throws \pocketmine\level\LevelException
      */
     public function onPlayerJoinTeam(Player $player): void
     {
+        foreach (array_filter($player->getLevel()->getEntities(), function (Entity $entity) {
+            return $this->removeEntityOnArenaReset($entity);
+        }) as $entity) {
+            $player->getLevel()->removeEntity($entity);
+        }
         $player->setSpawn(Position::fromObject(API::getTeamOfPlayer($player)->getSpawn(), API::getArenaOfPlayer($player)->getLevel()));
         //Team color switching
         $player->getInventory()->addItem(Item::get(ItemIds::BED, API::getMetaByColor(API::getTeamOfPlayer($player)->getColor()))->setCustomName("Switch Team"));

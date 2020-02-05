@@ -28,6 +28,11 @@ class JoinableArenaEnumArgument extends StringEnumArgument
         $p = Loader::getInstance();
         $arenas = $p->getArenas();
 
+        var_dump(array_values(array_map(function (Arena $arena): string {
+            return $arena->getLevelName();
+        }, array_filter($arenas, function (Arena $arena): bool {
+            return ($arena->getState() === Arena::IDLE || $arena->getState() === Arena::WAITING);
+        }))));
         return array_values(array_map(function (Arena $arena): string {
             return $arena->getLevelName();
         }, array_filter($arenas, function (Arena $arena): bool {

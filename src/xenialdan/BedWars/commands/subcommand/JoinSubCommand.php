@@ -56,6 +56,7 @@ class JoinSubCommand extends BaseSubCommand
                 return;
             }
         }
+        $sender->sendMessage(TextFormat::GREEN . "Joining arena " . $arena->getLevelName());
         if (!$arena->joinTeam($sender)) {
             $sender->sendMessage(TextFormat::RED . "Error joining arena");
             return;

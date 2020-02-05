@@ -27,7 +27,7 @@ class StopSubCommand extends BaseSubCommand
             $sender->sendMessage(TextFormat::RED . "This command can only be used as a player");
             return;
         }
-        /** @var Game $p */
+        /** @var Game|Loader $p */
         $p = Loader::getInstance();
         /** @var Player $sender */
         $arena = API::getArenaOfPlayer($sender);
@@ -35,6 +35,7 @@ class StopSubCommand extends BaseSubCommand
             $sender->sendMessage(TextFormat::RED . "It appears that you are not in an arena of " . $p->getPrefix());
             return;
         }
-        $p->stopArena($arena);
+        $sender->sendMessage(TextFormat::GREEN . "Stopping arena " . $arena->getLevelName());
+        $arena->stopArena();
     }
 }

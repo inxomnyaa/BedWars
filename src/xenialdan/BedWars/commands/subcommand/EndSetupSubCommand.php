@@ -7,6 +7,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\Loader;
+use xenialdan\gameapi\API;
 use xenialdan\gameapi\Game;
 
 class EndSetupSubCommand extends BaseSubCommand
@@ -29,6 +30,11 @@ class EndSetupSubCommand extends BaseSubCommand
         /** @var Game $p */
         $p = Loader::getInstance();
         /** @var Player $sender */
+        $arena = API::getArenaByLevel($p, $sender->getLevel());
+        if (is_null($arena) || !API::isArenaOf($p, $arena->getLevel())) {
+            $sender->sendMessage(TextFormat::RED . "It appears that you are not in an arena of " . $p->getPrefix());
+            return;
+        }
         $p->endSetupArena($sender);
     }
 }

@@ -21,6 +21,7 @@ class BedwarsCommand extends BaseCommand
 
     /**
      * This is where all the arguments, permissions, sub-commands, etc would be registered
+     * @throws \CortexPE\Commando\exception\SubCommandCollision
      */
     protected function prepare(): void
     {
