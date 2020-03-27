@@ -1,8 +1,8 @@
 ---
 name: XBedWars
 main: xenialdan\BedWars\Loader
-version: 2.0.0
-api: [3.11]
+version: 2.0.2
+api: ["3.11"]
 author: XenialDan
 load: POSTWORLD
 softdepend:

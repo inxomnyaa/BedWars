@@ -87,14 +87,14 @@ class Loader extends Game
     public function getNewArena(string $settingsPath): Arena
     {
         $settings = new BedwarsSettings($settingsPath);
-        var_dump($settings->gold, $settings->get("gold"));
+        #var_dump($settings->gold, $settings->get("gold"));
         $levelname = basename($settingsPath, ".json");
         $arena = new Arena($levelname, $this, $settings);
-        var_dump($settings->teams, $settings->get("teams"));
+        #var_dump($settings->teams, $settings->get("teams"));
         foreach ($settings->get("teams", []) as $teamname => $teaminfo) {
             $team = new BedwarsTeam($teaminfo["color"] ?? TextFormat::RESET, $teamname);
-            $team->setMinPlayers(1);
-            $team->setMaxPlayers($teaminfo["maxplayers"] ?? 1);
+            $team->setMinPlayers(max(1, $teaminfo["minplayers"] ?? 1));
+            $team->setMaxPlayers(max(1, $teaminfo["maxplayers"] ?? 1));
             #if (!is_null($teaminfo["spawn"]))
             $team->setSpawn(new Vector3(
                     $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
@@ -102,7 +102,7 @@ class Loader extends Game
                     $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
                 )
             );
-            var_dump($team);
+            #var_dump($team);
             $arena->addTeam($team);
         }
         return $arena;
@@ -158,15 +158,17 @@ class Loader extends Game
                         Server::getInstance()->loadLevel($setup["name"]);
                         $form = new CustomForm("Bedwars teams setup");
                         $form->addElement(new StepSlider("Teams", ['2', '3', '4', '5', '6', '7', '8']));
+                        $form->addElement(new StepSlider("Minimum players per team", ['1', '2', '3', '4', '5']));
                         $form->addElement(new StepSlider("Maximum players per team", ['1', '2', '3', '4', '5']));
                         $form->setCallable(function (Player $player, $data) use ($setup) {
                             $setup["teamcount"] = intval($data[0]);
-                            $setup["maxplayers"] = intval($data[1]);
+                            $setup["minplayers"] = intval($data[1]);
+                            $setup["maxplayers"] = intval($data[2]);
                             $teams = self::getTeamNamesByAmount($setup["teamcount"]);
                             //New arena
                             $settings = new BedwarsSettings($this->getDataFolder() . $setup["name"] . ".json");
                             foreach ($teams as $color => $name) {
-                                $settings->teams[$name] = ["color" => $color, "maxplayers" => $setup["maxplayers"]];
+                                $settings->teams[$name] = ["color" => $color, "minplayers" => $setup["minplayers"], "maxplayers" => $setup["maxplayers"]];
                             }
                             $settings->save();
                             $this->addArena($this->getNewArena($this->getDataFolder() . $setup["name"] . ".json"));
@@ -180,7 +182,7 @@ class Loader extends Game
                             $message .= implode(TextFormat::RESET . ", ", $tc);
                             $message .= TextFormat::RESET . ")";
                             $player->sendMessage($message);
-                            $player->sendMessage(TextFormat::AQUA . "Maximum players per team: " . TextFormat::DARK_AQUA . $setup["maxplayers"]);
+                            $player->sendMessage(TextFormat::AQUA . "Players per team: " . TextFormat::DARK_AQUA . $setup["minplayers"] . " - " . $setup["maxplayers"]);
                             $player->sendMessage(TextFormat::GOLD . "Use \"/bw setup\" to set the team and item spawn points");
                         });
                         $player->sendForm($form);
