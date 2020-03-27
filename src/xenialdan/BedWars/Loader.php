@@ -118,7 +118,7 @@ class Loader extends Game
             TextFormat::DARK_PURPLE => "Purple",
             TextFormat::GOLD => "Orange",
             TextFormat::LIGHT_PURPLE => "Pink",
-            TextFormat::DARK_AQUA => "Cyan",
+            TextFormat::AQUA => "Aqua",
         ];
         return array_slice($teams, 0, $amount, true);
     }
