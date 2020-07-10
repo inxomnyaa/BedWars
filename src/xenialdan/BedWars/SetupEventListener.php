@@ -5,7 +5,6 @@ namespace xenialdan\BedWars;
 
 
 use pocketmine\block\Block;
-use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -16,6 +15,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\entity\ShopVillager;
 use xenialdan\gameapi\API;
 use xenialdan\gameapi\Arena;
 
@@ -27,7 +27,7 @@ class SetupEventListener implements Listener
      * @param EntitySpawnEvent $e
      */
     public function spawnShop(EntitySpawnEvent $e){
-        if(!$e->getEntity() instanceof Villager) return;
+        if (!$e->getEntity() instanceof ShopVillager) return;
         if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
         if ($arena->getState() !== Arena::SETUP) {
@@ -46,8 +46,8 @@ class SetupEventListener implements Listener
      * @param EntityDamageEvent $e
      */
     public function removeOrRotateShop(EntityDamageEvent $e){
-        if(!$e->getEntity() instanceof Villager || !$e instanceof EntityDamageByEntityEvent) return;
-        if(!$e->getDamager() instanceof Player) return;
+        if (!$e->getEntity() instanceof ShopVillager || !$e instanceof EntityDamageByEntityEvent) return;
+        if (!$e->getDamager() instanceof Player) return;
         if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
         if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
         if ($arena->getState() !== Arena::SETUP) {

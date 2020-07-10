@@ -3,7 +3,6 @@
 namespace xenialdan\BedWars;
 
 use pocketmine\block\Bed;
-use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -13,6 +12,7 @@ use pocketmine\item\ItemIds;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use xenialdan\BedWars\entity\ShopVillager;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\windows\SimpleForm;
 use xenialdan\gameapi\API;
@@ -34,7 +34,7 @@ class EventListener implements Listener
                 $event->setCancelled();
                 if ($event instanceof EntityDamageByEntityEvent) {
                     if (($damager = $event->getDamager()) instanceof Player) {
-                        if ($event->getEntity() instanceof Villager) {
+                        if ($event->getEntity() instanceof ShopVillager) {
                             if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getEntity()->getLevel())) instanceof Arena) {
                                 if ($arena->getState() !== Arena::INGAME /*&& $arena->getState() !== Arena::SETUP*/) {
                                     $event->setCancelled();
@@ -104,7 +104,6 @@ class EventListener implements Listener
                         $spk->volume = 1;
                         $spk->pitch = 0.0;
                         $spk->soundName = "mob.enderdragon.end";
-                        var_dump($spk);
                         $entity->getLevel()->broadcastGlobalPacket($spk);
                         #if (count($arena->getPlayers()) <= 1) $arena->stopArena();
                     }

@@ -26,6 +26,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use xenialdan\BedWars\commands\BedwarsCommand;
+use xenialdan\BedWars\entity\ShopVillager;
 use xenialdan\BedWars\task\SpawnItemsTask;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\elements\Input;
@@ -69,6 +70,7 @@ class Loader extends Game
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SetupEventListener(), $this);
+        Entity::registerEntity(ShopVillager::class, true, ['BWShop', 'bedwars:shop']);
         $this->getServer()->getCommandMap()->register("XBedWars", new BedwarsCommand($this));
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
