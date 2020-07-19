@@ -32,4 +32,3 @@ permissions:
         default: op
       bedwars.command.help:
         default: true
-...
