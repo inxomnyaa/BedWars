@@ -26,7 +26,6 @@ use xenialdan\gameapi\Team;
  */
 class EventListener implements Listener
 {
-
     public function onDamage(EntityDamageEvent $event)
     {
         if (API::isArenaOf(Loader::getInstance(), $event->getEntity()->getLevel())) {
@@ -85,7 +84,9 @@ class EventListener implements Listener
                         $entity->sendTip(TextFormat::RED . "You can not break your own teams bed!");//TODO add a warning to the player?
                         return;
                     } else {
-                        if ($attackedTeam->isBedDestroyed()) return;
+                        if ($attackedTeam->isBedDestroyed()) {
+                            return;
+                        }
                         $event->setCancelled(false);
                         $attackedTeam->setBedDestroyed();
                         $teamOfPlayer = API::getTeamOfPlayer($entity);//TODO test if still happens in setup
@@ -114,13 +115,15 @@ class EventListener implements Listener
 
     public function onBlockPlaceEvent(BlockPlaceEvent $event)
     {
-        if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) return;
+        if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) {
+            return;
+        }
         if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getBlock()->getLevel())) instanceof Arena) {
             if (($arena->getState() === Arena::STARTING || $arena->getState() === Arena::WAITING) && $event->getItem()->getId() === ItemIds::BED) {
                 $event->setCancelled();
                 $player = $event->getPlayer();
                 /** @var Team $team */
-                if(count(($team = $arena->getTeamByPlayer($player))->getPlayers()) <= $team->getMinPlayers()){
+                if (count(($team = $arena->getTeamByPlayer($player))->getPlayers()) <= $team->getMinPlayers()) {
                     $player->sendMessage(TextFormat::RED.TextFormat::BOLD."Can not leave the team because a minimum of ".$team->getMinPlayers(). " players is required for this team");
                     return;
                 }
@@ -142,6 +145,5 @@ class EventListener implements Listener
                 $event->setCancelled();
             }*/
         }
-
     }
 }

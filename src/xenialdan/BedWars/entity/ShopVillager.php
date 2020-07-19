@@ -11,7 +11,6 @@ use pocketmine\Player;
 
 class ShopVillager extends Villager
 {
-
     public function getName(): string
     {
         return "Shop Villager";
