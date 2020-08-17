@@ -24,5 +24,4 @@ class BedwarsTeam extends Team
     {
         $this->bedDestroyed = $bedDestroyed;
     }
-
 }

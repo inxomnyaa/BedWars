@@ -66,8 +66,12 @@ class Loader extends Game
 
     public function onEnable(): void
     {
-        if (!InvMenuHandler::isRegistered()) InvMenuHandler::register($this);
-        if (!PacketHooker::isRegistered()) PacketHooker::register($this);
+        if (!InvMenuHandler::isRegistered()) {
+            InvMenuHandler::register($this);
+        }
+        if (!PacketHooker::isRegistered()) {
+            PacketHooker::register($this);
+        }
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new JoinGameListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new LeaveGameListener(), $this);
@@ -75,7 +79,9 @@ class Loader extends Game
         /** @noinspection PhpUnhandledExceptionInspection */
         API::registerGame($this);
         $glob = glob($this->getDataFolder() . "*.json");
-        if ($glob === false) throw new PluginException("Could not load arena settings json file");
+        if ($glob === false) {
+            throw new PluginException("Could not load arena settings json file");
+        }
         foreach ($glob as $v) {
             $this->addArena($this->getNewArena($v));
         }
@@ -96,10 +102,11 @@ class Loader extends Game
             $team->setMinPlayers(max(1, $teaminfo["minplayers"] ?? 1));
             $team->setMaxPlayers(max(1, $teaminfo["maxplayers"] ?? 1));
             #if (!is_null($teaminfo["spawn"]))
-            $team->setSpawn(new Vector3(
-                    $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
-                    $teaminfo["spawn"]["y"] ?? $arena->getLevel()->getSpawnLocation()->getFloorY(),
-                    $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
+            $team->setSpawn(
+                new Vector3(
+                $teaminfo["spawn"]["x"] ?? $arena->getLevel()->getSpawnLocation()->getFloorX(),
+                $teaminfo["spawn"]["y"] ?? $arena->getLevel()->getSpawnLocation()->getFloorY(),
+                $teaminfo["spawn"]["z"] ?? $arena->getLevel()->getSpawnLocation()->getFloorZ()
                 )
             );
             #var_dump($team);
@@ -178,7 +185,9 @@ class Loader extends Game
                             $message = TextFormat::AQUA . "Teams: " . TextFormat::LIGHT_PURPLE . $setup["teamcount"];
                             $message .= TextFormat::RESET . "(";
                             $tc = [];
-                            foreach ($teams as $color => $name) $tc[] = $color . ucfirst($name);
+                            foreach ($teams as $color => $name) {
+                                $tc[] = $color . ucfirst($name);
+                            }
                             $message .= implode(TextFormat::RESET . ", ", $tc);
                             $message .= TextFormat::RESET . ")";
                             $player->sendMessage($message);
@@ -190,7 +199,7 @@ class Loader extends Game
                     $player->sendForm($form);
                 });
                 $player->sendForm($form);
-            } else if ($data === $ea) {
+            } elseif ($data === $ea) {
                 $form = new SimpleForm("Edit Bedwars arena");
                 $build = "Build / Edit item spawners";
                 $button = new Button($build);
@@ -213,14 +222,18 @@ class Loader extends Game
                         case $build:
                         {
                             $form = new SimpleForm($build, "Select the arena you'd like to build in");
-                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            foreach ($this->getArenas() as $arena) {
+                                $form->addButton(new Button($arena->getLevelName()));
+                            }
                             $form->setCallable(function (Player $player, $data) {
                                 $worldname = $data;
                                 $arena = API::getArenaByLevelName($this, $worldname);
                                 $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
                                 $arena->stopArena();
                                 $arena->setState(Arena::SETUP);
-                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) {
+                                    $this->getServer()->loadLevel($worldname);
+                                }
                                 $player->teleport($arena->getLevel()->getSpawnLocation());
                                 $player->setGamemode(Player::CREATIVE);
                                 $player->setAllowFlight(true);
@@ -237,14 +250,18 @@ class Loader extends Game
                         case $editspawnpoints:
                         {
                             $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to edit the spawn points of");
-                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            foreach ($this->getArenas() as $arena) {
+                                $form->addButton(new Button($arena->getLevelName()));
+                            }
                             $form->setCallable(function (Player $player, $data) {
                                 $worldname = $data;
                                 $arena = API::getArenaByLevelName($this, $worldname);
                                 $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
                                 $arena->stopArena();
                                 $arena->setState(Arena::SETUP);
-                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) {
+                                    $this->getServer()->loadLevel($worldname);
+                                }
                                 $player->teleport($arena->getLevel()->getSpawnLocation());
                                 $player->setGamemode(Player::SURVIVAL);
                                 $player->setAllowFlight(true);
@@ -266,14 +283,18 @@ class Loader extends Game
                         case $addvillager:
                         {
                             $form = new SimpleForm($editspawnpoints, "Select the arena you'd like to add a villager shop in");
-                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            foreach ($this->getArenas() as $arena) {
+                                $form->addButton(new Button($arena->getLevelName()));
+                            }
                             $form->setCallable(function (Player $player, $data) {
                                 $worldname = $data;
                                 $arena = API::getArenaByLevelName($this, $worldname);
                                 $this->getServer()->broadcastMessage("Stopping arena, reason: Admin actions", $arena->getPlayers());
                                 $arena->stopArena();
                                 $arena->setState(Arena::SETUP);
-                                if (!$this->getServer()->isLevelLoaded($worldname)) $this->getServer()->loadLevel($worldname);
+                                if (!$this->getServer()->isLevelLoaded($worldname)) {
+                                    $this->getServer()->loadLevel($worldname);
+                                }
                                 $player->teleport($arena->getLevel()->getSpawnLocation());
                                 $player->setGamemode(Player::SURVIVAL);
                                 $player->setAllowFlight(true);
@@ -293,7 +314,9 @@ class Loader extends Game
                         case $delete:
                         {
                             $form = new SimpleForm("Delete Bedwars arena", "Select an arena to remove. The world will NOT be deleted");
-                            foreach ($this->getArenas() as $arena) $form->addButton(new Button($arena->getLevelName()));
+                            foreach ($this->getArenas() as $arena) {
+                                $form->addButton(new Button($arena->getLevelName()));
+                            }
                             $form->setCallable(function (Player $player, $data) {
                                 $worldname = $data;
                                 $form = new ModalForm("Confirm delete", "Please confirm that you want to delete the arena \"$worldname\"", "Delete $worldname", "Abort");
@@ -323,8 +346,8 @@ class Loader extends Game
     public function removePlayer(Arena $arena, Player $player): void
     {
         $arena->bossbar->setTitle(count(array_filter($arena->getTeams(), function (Team $team): bool {
-                return count($team->getPlayers()) > 0;
-            })) . ' teams alive');
+            return count($team->getPlayers()) > 0;
+        })) . ' teams alive');
     }
 
     /**
@@ -342,8 +365,8 @@ class Loader extends Game
         }
 
         $arena->bossbar->setSubTitle()->setTitle(count(array_filter($arena->getTeams(), function (BedwarsTeam $team): bool {
-                return count($team->getPlayers()) > 0;
-            })) . ' teams alive')->setPercentage(1);
+            return count($team->getPlayers()) > 0;
+        })) . ' teams alive')->setPercentage(1);
 
         $this->getScheduler()->scheduleDelayedRepeatingTask(new SpawnItemsTask($arena), 100, 1);
     }
@@ -369,13 +392,17 @@ class Loader extends Game
                 continue;
             }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
-            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) {
+                $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            }
             //Stack items if too many
             if (count($arena->getLevel()->getChunkEntities($v->x >> 4, $v->z >> 4)) >= 50) {
                 /** @var ItemEntity|null $last */
                 $last = null;
                 foreach ($arena->getLevel()->getChunkEntities($v->x >> 4, $v->z >> 4) as $chunkEntity) {
-                    if (!$chunkEntity instanceof ItemEntity) continue;
+                    if (!$chunkEntity instanceof ItemEntity) {
+                        continue;
+                    }
                     if ($chunkEntity->getItem()->getId() === ItemIds::BRICK) {
                         if ($last === null || $last->getItem()->getCount() >= 64) {
                             $last = $chunkEntity;
@@ -413,7 +440,9 @@ class Loader extends Game
                 continue;
             }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
-            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) {
+                $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            }
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::IRON_INGOT))->setCustomName(TextFormat::GRAY . "Silver"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
@@ -433,7 +462,9 @@ class Loader extends Game
                 continue;
             }
             $v = new Vector3($spawn["x"] + 0.5, $spawn["y"] + 1, $spawn["z"] + 0.5);
-            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            if (!$arena->getLevel()->isChunkLoaded($v->x >> 4, $v->z >> 4)) {
+                $arena->getLevel()->loadChunk($v->x >> 4, $v->z >> 4);
+            }
             $arena->getLevel()->dropItem($v, (new Item(ItemIds::GOLD_INGOT))->setCustomName(TextFormat::YELLOW . "Gold"));
             $arena->getLevel()->broadcastLevelSoundEvent($v, LevelSoundEventPacket::SOUND_DROP_SLOT);
         }
@@ -594,11 +625,13 @@ class Loader extends Game
 
         $gs2 = $this->generateShopItem(Item::get(ItemIds::GOLD_SWORD), 1, 4, self::SILVER);
         $gs2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $gs2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS)));;
+        $gs2->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS)));
+        ;
 
         $gs3 = $this->generateShopItem(Item::get(ItemIds::GOLD_SWORD), 1, 8, self::SILVER);
         $gs3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
-        $gs3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS), 2));;
+        $gs3->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::SHARPNESS), 2));
+        ;
 
         $is1 = $this->generateShopItem(Item::get(ItemIds::IRON_SWORD), 1, 4, self::GOLD);
         $is1->addEnchantment(new EnchantmentInstance(Enchantment::getEnchantment(Enchantment::UNBREAKING)));
@@ -692,7 +725,9 @@ class Loader extends Game
     {
         [$value, $valueType] = explode("x ", $item->getLore()[0] ?? "0x " . self::GOLD);
         $value = intval($value);
-        if ($value < 1) return false;
+        if ($value < 1) {
+            return false;
+        }
         $item = $item->setLore([]);
         switch ($valueType) {
             case self::BRONZE:

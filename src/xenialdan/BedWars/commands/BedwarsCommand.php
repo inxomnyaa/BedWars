@@ -43,6 +43,8 @@ class BedwarsCommand extends BaseCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        if (empty($args)) $this->sendUsage();
+        if (empty($args)) {
+            $this->sendUsage();
+        }
     }
 }

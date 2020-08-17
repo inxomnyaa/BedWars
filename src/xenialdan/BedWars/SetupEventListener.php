@@ -26,9 +26,15 @@ class SetupEventListener implements Listener
      */
     public function spawnShop(EntitySpawnEvent $e): void
     {
-        if (!$e->getEntity() instanceof Villager) return;
-        if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
+        if (!$e->getEntity() instanceof Villager) {
+            return;
+        }
+        if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) {
+            return;
+        }
+        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) {
+            return;
+        }
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
@@ -46,10 +52,18 @@ class SetupEventListener implements Listener
      */
     public function removeOrRotateShop(EntityDamageEvent $e): void
     {
-        if (!$e->getEntity() instanceof Villager || !$e instanceof EntityDamageByEntityEvent) return;
-        if (!$e->getDamager() instanceof Player) return;
-        if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) return;
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) return;
+        if (!$e->getEntity() instanceof Villager || !$e instanceof EntityDamageByEntityEvent) {
+            return;
+        }
+        if (!$e->getDamager() instanceof Player) {
+            return;
+        }
+        if (!API::isArenaOf(Loader::getInstance(), ($level = ($entity = $e->getEntity())->getLevel()))) {
+            return;
+        }
+        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $level)) instanceof Arena) {
+            return;
+        }
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
@@ -69,16 +83,24 @@ class SetupEventListener implements Listener
      */
     public function setSpawns(BlockPlaceEvent $e): void
     {
-        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
+        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) {
+            return;
+        }
+        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) {
+            return;
+        }
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
-        if ($e->getBlock()->getId() !== Block::CONCRETE) return;
+        if ($e->getBlock()->getId() !== Block::CONCRETE) {
+            return;
+        }
         $e->setCancelled();
         $color = API::getColorByMeta($e->getBlock()->getDamage());
         $team = API::getTeamByColor(Loader::getInstance(), $e->getPlayer()->getLevel(), $color);
-        if (is_null($team)) return;
+        if (is_null($team)) {
+            return;
+        }
         $team->setSpawn($e->getBlock()->asVector3());
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -93,12 +115,18 @@ class SetupEventListener implements Listener
      */
     public function removeItemSpawns(BlockBreakEvent $e): void
     {
-        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
+        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) {
+            return;
+        }
+        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) {
+            return;
+        }
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
-        if ($e->getBlock()->getId() !== Block::GOLD_BLOCK && $e->getBlock()->getId() !== Block::IRON_BLOCK && $e->getBlock()->getId() !== Block::HARDENED_CLAY) return;
+        if ($e->getBlock()->getId() !== Block::GOLD_BLOCK && $e->getBlock()->getId() !== Block::IRON_BLOCK && $e->getBlock()->getId() !== Block::HARDENED_CLAY) {
+            return;
+        }
         $e->setCancelled();
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -137,8 +165,11 @@ class SetupEventListener implements Listener
                 }
             }
         }
-        if ($removed) $arena->getSettings()->save();
-        else $e->setCancelled(false);
+        if ($removed) {
+            $arena->getSettings()->save();
+        } else {
+            $e->setCancelled(false);
+        }
     }
 
     /**
@@ -147,13 +178,21 @@ class SetupEventListener implements Listener
      */
     public function setItemSpawns(PlayerInteractEvent $e): void
     {
-        if ($e->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) return;
-        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) return;
-        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) return;
+        if ($e->getAction() !== PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        if (!API::isArenaOf(Loader::getInstance(), $e->getBlock()->getLevel())) {
+            return;
+        }
+        if (!($arena = API::getArenaByLevel(Loader::getInstance(), $e->getBlock()->getLevel())) instanceof Arena) {
+            return;
+        }
         if ($arena->getState() !== Arena::SETUP) {
             return;
         }
-        if ($e->getBlock()->getId() !== Block::GOLD_BLOCK && $e->getBlock()->getId() !== Block::IRON_BLOCK && $e->getBlock()->getId() !== Block::HARDENED_CLAY) return;
+        if ($e->getBlock()->getId() !== Block::GOLD_BLOCK && $e->getBlock()->getId() !== Block::IRON_BLOCK && $e->getBlock()->getId() !== Block::HARDENED_CLAY) {
+            return;
+        }
         $e->setCancelled();
         /** @var BedwarsSettings $settings */
         $settings = $arena->getSettings();
@@ -190,5 +229,4 @@ class SetupEventListener implements Listener
         }
         $arena->getSettings()->save();
     }
-
 }
