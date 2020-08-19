@@ -15,7 +15,6 @@ use pocketmine\utils\TextFormat;
  */
 class JoinGameListener implements Listener
 {
-
     public function onInteract(PlayerInteractEvent $event): void
     {
         $action = $event->getAction();
@@ -41,5 +40,4 @@ class JoinGameListener implements Listener
             }
         }
     }
-
 }

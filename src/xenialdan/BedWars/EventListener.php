@@ -26,7 +26,6 @@ use xenialdan\gameapi\Arena;
  */
 class EventListener implements Listener
 {
-
     public function onDamage(EntityDamageEvent $event): void
     {
         if (API::isArenaOf(Loader::getInstance(), $event->getEntity()->getLevel())) {
@@ -84,7 +83,9 @@ class EventListener implements Listener
                         $entity->sendTip(TextFormat::RED . "You can not break your own teams bed!");//TODO add a warning to the player?
                         return;
                     } else {
-                        if ($attackedTeam->isBedDestroyed()) return;
+                        if ($attackedTeam->isBedDestroyed()) {
+                            return;
+                        }
                         $event->setCancelled(false);
                         $attackedTeam->setBedDestroyed();
                         $teamOfPlayer = API::getTeamOfPlayer($entity);//TODO test if still happens in setup
@@ -114,7 +115,9 @@ class EventListener implements Listener
 
     public function onBlockPlaceEvent(BlockPlaceEvent $event): void
     {
-        if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) return;
+        if (!API::isArenaOf(Loader::getInstance(), $event->getBlock()->getLevel())) {
+            return;
+        }
         if (($arena = API::getArenaByLevel(Loader::getInstance(), $event->getBlock()->getLevel())) instanceof Arena) {
             if (($arena->getState() === Arena::STARTING || $arena->getState() === Arena::WAITING) && $event->getItem()->getId() === ItemIds::BED) {
                 $event->setCancelled();
@@ -133,7 +136,9 @@ class EventListener implements Listener
                 $form->setCallable(function (Player $player, $data) use ($arena) {
                     $player->getInventory()->clearAll();
                     $length = strpos($data, " ");
-                    if ($length === false) throw new InvalidArgumentException("Invalid form data received");
+                    if ($length === false) {
+                        throw new InvalidArgumentException("Invalid form data received");
+                    }
                     $data = TextFormat::clean(substr($data, 0, $length));
                     $arena->joinTeam($player, $data);
                 });
@@ -144,6 +149,5 @@ class EventListener implements Listener
                 $event->setCancelled();
             }*/
         }
-
     }
 }

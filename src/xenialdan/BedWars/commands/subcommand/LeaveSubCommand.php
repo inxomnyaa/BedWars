@@ -35,7 +35,10 @@ class LeaveSubCommand extends BaseSubCommand
             $sender->sendMessage(TextFormat::RED . "It appears that you are not in an arena of " . $p->getPrefix());
             return;
         }
-        if (API::isPlaying($sender, $p)) $arena->removePlayer($sender); else
+        if (API::isPlaying($sender, $p)) {
+            $arena->removePlayer($sender);
+        } else {
             $sender->sendMessage(TextFormat::RED . "It appears that you are not playing " . $p->getPrefix());
+        }
     }
 }
